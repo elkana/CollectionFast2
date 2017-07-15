@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -316,7 +315,7 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
 
                             // kalo udah ada, update.
                             if (first == null) {
-                                first = realm.createObject(TrnNews.class);
+                                first = r.createObject(TrnNews.class);
                             }
 
                             first.setUid(key_uid == null ? java.util.UUID.randomUUID().toString() : key_uid);
@@ -344,7 +343,7 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
                         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);  //dont use PushNotificationActivity or wont run after click on notification
                         //must redefine supaya bisa dieksekusi dari notificationbar
                         resultIntent.putExtras(extras);
-                        NotificationUtils.showNotificationMessage(PushNotificationActivity.this, intent.getStringExtra("title"), intent.getStringExtra("body"), "", resultIntent);
+                        NotificationUtils.showNotificationChat(PushNotificationActivity.this, intent.getStringExtra("title"), intent.getStringExtra("body"), "", resultIntent);
 
                     } else {
                         String key_uid = intent.getStringExtra(ConstChat.KEY_UID);
@@ -360,13 +359,13 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
 
                         if (key_uid == null) {
                             String body = intent.getStringExtra("body");
-                            NotificationUtils.showNotificationMessage(PushNotificationActivity.this, key_from, body, "", intent);
+                            NotificationUtils.showNotificationChat(PushNotificationActivity.this, key_from, body, "", intent);
                         } else {
                     /*
                     di MainActivity memang semua broadcast message pasti ditaruh di notificationbar sehingga harus new intent
                     */
 
-                            if (mSelectedNavMenuIndex == R.id.nav_chats ) {
+                            if (mSelectedNavMenuIndex == R.id.nav_chats) {
                                 onNewIntent(intent);
                             } else {
 //                    di MainActivity memang semua broadcast message pasti ditaruh di notificationbar sehingga harus new intent, onCreate tdk akan terbaca melainkan ke onNewIntent
@@ -374,7 +373,7 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
                                 //must redefine supaya bisa dieksekusi dari notificationbar
                                 resultIntent.putExtras(extras);
 //                            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                NotificationUtils.showNotificationMessage(PushNotificationActivity.this, key_from, key_msg, "", resultIntent);
+                                NotificationUtils.showNotificationChat(PushNotificationActivity.this, key_from, key_msg, "", resultIntent);
                             }
 
                         }
@@ -450,11 +449,21 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
         // biasa dipanggil saat user click notification bar
         super.onNewIntent(intent);
 
+        NotificationUtils.clearNotifications(this);
+
 //        setIntent(intent);
 
         // jika user click notificationsnya
 //        Intent intent = this.getIntent();
-        if (intent.getExtras() != null) {
+        if (intent == null || intent.getExtras() == null) {
+            return;
+        }
+
+        if (NewsUtil.isTitleIsNews(intent.getStringExtra("title"))) {
+            // cant do much since news is activity
+            // wish i can bring it front
+
+        } else {
             final String key_from = intent.getStringExtra(ConstChat.KEY_FROM);
             final String key_uid = intent.getStringExtra(ConstChat.KEY_UID);
             final String key_msg = intent.getStringExtra(ConstChat.KEY_MESSAGE);
@@ -464,198 +473,192 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
 
             final String collCode = getCurrentUserId();
 
-            if (!TextUtils.isEmpty(key_uid)) {
+            if (TextUtils.isEmpty(key_uid)) {
+                return;
+            }
 
-                if (mSelectedNavMenuIndex != R.id.nav_chats) {
+            if (mSelectedNavMenuIndex != R.id.nav_chats) {
 
-                    // harusnya open chat fragment
-                    displayView(R.id.nav_chats);
+                // harusnya open chat fragment
+                displayView(R.id.nav_chats);
 
-                    // BE CAREFUL ! http://stackoverflow.com/questions/18640922/why-findfragmentbyid-returns-the-old-fragment-was-in-before-the-call-to-replace
-                    // fragment still assigned as HomeFragment, so need to executePendingTransactions
-                    getSupportFragmentManager().executePendingTransactions();
+                // BE CAREFUL ! http://stackoverflow.com/questions/18640922/why-findfragmentbyid-returns-the-old-fragment-was-in-before-the-call-to-replace
+                // fragment still assigned as HomeFragment, so need to executePendingTransactions
+                getSupportFragmentManager().executePendingTransactions();
 
-                }
+            }
 
-                if (!TextUtils.isEmpty(key_status)) {
-                    // jika key_status = 1 maka update ke server kalo udah diterima dan dibuka
-                    if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_SERVER_RECEIVED)) {
-                        final String msgStatus = Utility.isScreenOff(this) ? ConstChat.MESSAGE_STATUS_DELIVERED : ConstChat.MESSAGE_STATUS_READ_AND_OPENED;
-                        if (!TextUtils.isEmpty(key_uid)) {
+            if (!TextUtils.isEmpty(key_status)) {
+                // jika key_status = 1 maka update ke server kalo udah diterima dan dibuka
+                if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_SERVER_RECEIVED)) {
+                    final String msgStatus = Utility.isScreenOff(this) ? ConstChat.MESSAGE_STATUS_DELIVERED : ConstChat.MESSAGE_STATUS_READ_AND_OPENED;
+                    this.realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            TrnChatMsg msg = realm.where(TrnChatMsg.class)
+                                    .equalTo("uid", key_uid)
+                                    .findFirst();
 
-                            this.realm.executeTransaction(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm realm) {
-                                    TrnChatMsg msg = realm.where(TrnChatMsg.class)
-                                            .equalTo("uid", key_uid)
-                                            .findFirst();
-
-                                    if (msg == null) {
-                                        msg = new TrnChatMsg();
-                                        msg.setUid(key_uid);
+                            if (msg == null) {
+                                msg = new TrnChatMsg();
+                                msg.setUid(key_uid);
 //                                        msg.setSeqNo(Long.parseLong(key_seqno));
 
-                                        msg.setFromCollCode(key_from);
-                                        msg.setToCollCode(collCode);
+                                msg.setFromCollCode(key_from);
+                                msg.setToCollCode(collCode);
 
-                                        msg.setMessage(key_msg);
-                                        msg.setMessageType(ConstChat.MESSAGE_TYPE_COMMON);
-                                        msg.setCreatedTimestamp(Utility.convertStringToDate(key_timestamp, "yyyyMMddHHmmssSSS"));
+                                msg.setMessage(key_msg);
+                                msg.setMessageType(ConstChat.MESSAGE_TYPE_COMMON);
+                                msg.setCreatedTimestamp(Utility.convertStringToDate(key_timestamp, "yyyyMMddHHmmssSSS"));
 
-                                    } else {
-                                    }
-                                    msg.setMessageStatus(msgStatus);
+                            } else {
+                            }
+                            msg.setMessageStatus(msgStatus);
 //                        msg.setMessageStatus(ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
-                                    // TODO: sepertinya perlu linkid, message ini me-respon message yg mana supaya urutannya benar
-                                    realm.copyToRealmOrUpdate(msg);
-                                }
-                            });
+                            // TODO: sepertinya perlu linkid, message ini me-respon message yg mana supaya urutannya benar
+                            realm.copyToRealmOrUpdate(msg);
                         }
+                    });
 
 
-                        // tell sender your message has been open and read, tp masalahnya layar mati jg kesini
-                        Call<ResponseBody> call = Storage.getAPIInterface().updateMessageStatus(key_uid, Utility.isScreenOff(this) ? ConstChat.MESSAGE_STATUS_DELIVERED : ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
-                        call.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
+                    // tell sender your message has been open and read, tp masalahnya layar mati jg kesini
+                    Call<ResponseBody> call = Storage.getAPIInterface().updateMessageStatus(key_uid, Utility.isScreenOff(this) ? ConstChat.MESSAGE_STATUS_DELIVERED : ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
 // write status as 3
-                                }
                             }
+                        }
 
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
-                    } else if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_READ_AND_OPENED)) {
-                        // update db
-                        final TrnChatMsg trnChatMsg = this.realm.where(TrnChatMsg.class)
-                                .equalTo("uid", key_uid)
-                                .findFirst();
-
-                        if (trnChatMsg != null) {
-
-                            this.realm.executeTransaction(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm realm) {
-                                    trnChatMsg.setMessageStatus(key_status);
-                                    realm.copyToRealmOrUpdate(trnChatMsg);
-                                }
-                            });
-                        } else {
-                            Call<ResponseGetChatHistory> call = Storage.getAPIInterface().getMessage(key_uid);
-                            call.enqueue(new Callback<ResponseGetChatHistory>() {
-                                @Override
-                                public void onResponse(Call<ResponseGetChatHistory> call, Response<ResponseGetChatHistory> response) {
-                                    if (response.isSuccessful()) {
-                                        final ResponseGetChatHistory body = response.body();
-
-                                        if (body != null) {
-
-                                            realm.executeTransaction(new Realm.Transaction() {
-                                                @Override
-                                                public void execute(Realm realm) {
-                                                    realm.copyToRealm(body.getData());
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseGetChatHistory> call, Throwable t) {
-
-                                }
-                            });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                         }
-                    } else if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_ALL_READ_AND_OPENED)) {
+                    });
+                } else if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_READ_AND_OPENED)) {
+                    // update db
+                    final TrnChatMsg trnChatMsg = this.realm.where(TrnChatMsg.class)
+                            .equalTo("uid", key_uid)
+                            .findFirst();
+
+                    if (trnChatMsg != null) {
+
                         this.realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                RealmResults<TrnChatMsg> unreadMessages = realm.where(TrnChatMsg.class)
-                                        .equalTo("fromCollCode", collCode)
-                                        .equalTo("toCollCode", key_from)
-                                        .notEqualTo("messageStatus", ConstChat.MESSAGE_STATUS_READ_AND_OPENED)
-                                        .findAll();
-
-                                if (unreadMessages.size() < 1)
-                                    return;
-
-                                for (TrnChatMsg msg : unreadMessages) {
-                                    msg.setMessageStatus(ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
-                                    realm.copyToRealmOrUpdate(msg);
-                                }
-
-                            }
-                        });
-
-                    }
-
-                }
-
-                final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-
-                if (frag != null && frag instanceof FragmentChatActiveContacts) {
-                    TrnChatContact contact = this.realm.where(TrnChatContact.class)
-                            .equalTo("collCode", key_from)
-                            .findFirst();
-
-                    if (contact == null) {
-                        List<String> collsCode = new ArrayList<>();
-                        collsCode.add(collCode);
-                        collsCode.add(key_from);
-
-                        NetUtil.chatGetContacts(PushNotificationActivity.this, collsCode, new OnGetChatContactListener() {
-
-                            @Override
-                            public void onSuccess(final List<TrnChatContact> list) {
-                                realm.executeTransaction(new Realm.Transaction() {
-                                    @Override
-                                    public void execute(Realm realm) {
-                                        realm.copyToRealmOrUpdate(list);
-                                    }
-                                });
-
-                                TrnChatContact contact = realm.where(TrnChatContact.class)
-                                        .equalTo("collCode", key_from)
-                                        .findFirst();
-
-                                String val1 = collCode;
-                                String val2 = contact.getCollCode();
-
-                                onContactSelected(contact);
-
-                            }
-
-                            @Override
-                            public void onFailure(Throwable throwable) {
-
-                            }
-
-                            @Override
-                            public void onSkip() {
-
+                                trnChatMsg.setMessageStatus(key_status);
+                                realm.copyToRealmOrUpdate(trnChatMsg);
                             }
                         });
                     } else {
-                        onContactSelected(contact);
+                        Call<ResponseGetChatHistory> call = Storage.getAPIInterface().getMessage(key_uid);
+                        call.enqueue(new Callback<ResponseGetChatHistory>() {
+                            @Override
+                            public void onResponse(Call<ResponseGetChatHistory> call, Response<ResponseGetChatHistory> response) {
+                                if (response.isSuccessful()) {
+                                    final ResponseGetChatHistory body = response.body();
+
+                                    if (body != null) {
+
+                                        realm.executeTransaction(new Realm.Transaction() {
+                                            @Override
+                                            public void execute(Realm realm) {
+                                                realm.copyToRealm(body.getData());
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseGetChatHistory> call, Throwable t) {
+
+                            }
+                        });
+
                     }
-                } else if (frag instanceof FragmentChatWith) {
+                } else if (key_status.equalsIgnoreCase(ConstChat.MESSAGE_STATUS_ALL_READ_AND_OPENED)) {
+                    this.realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            RealmResults<TrnChatMsg> unreadMessages = realm.where(TrnChatMsg.class)
+                                    .equalTo("fromCollCode", collCode)
+                                    .equalTo("toCollCode", key_from)
+                                    .notEqualTo("messageStatus", ConstChat.MESSAGE_STATUS_READ_AND_OPENED)
+                                    .findAll();
 
-                    NotificationUtils.clearNotifications(this);
+                            if (unreadMessages.size() < 1)
+                                return;
 
-//                    ((FragmentChatWith) frag).listAdapter.notifyDataSetChanged();
-                    ((FragmentChatWith) frag).scrollToLast();
+                            for (TrnChatMsg msg : unreadMessages) {
+                                msg.setMessageStatus(ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
+                                realm.copyToRealmOrUpdate(msg);
+                            }
+
+                        }
+                    });
 
                 }
+
             }
 
-        }
+            final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
 
-        NotificationUtils.clearNotifications(this);
+            if (frag != null && frag instanceof FragmentChatActiveContacts) {
+                TrnChatContact contact = this.realm.where(TrnChatContact.class)
+                        .equalTo("collCode", key_from)
+                        .findFirst();
+
+                if (contact == null) {
+                    List<String> collsCode = new ArrayList<>();
+                    collsCode.add(collCode);
+                    collsCode.add(key_from);
+
+                    NetUtil.chatGetContacts(PushNotificationActivity.this, collsCode, new OnGetChatContactListener() {
+
+                        @Override
+                        public void onSuccess(final List<TrnChatContact> list) {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    realm.copyToRealmOrUpdate(list);
+                                }
+                            });
+
+                            TrnChatContact contact = realm.where(TrnChatContact.class)
+                                    .equalTo("collCode", key_from)
+                                    .findFirst();
+
+                            String val1 = collCode;
+                            String val2 = contact.getCollCode();
+
+                            onContactSelected(contact);
+
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+
+                        }
+
+                        @Override
+                        public void onSkip() {
+
+                        }
+                    });
+                } else {
+                    onContactSelected(contact);
+                }
+            } else if (frag instanceof FragmentChatWith) {
+
+//                    ((FragmentChatWith) frag).listAdapter.notifyDataSetChanged();
+                ((FragmentChatWith) frag).scrollToLast();
+
+            }
+        }
     }
+
 
     protected void handleIntent(Intent intent) {
         if (intent == null)
@@ -933,7 +936,6 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
         }
 
 
-
         TrnChatMsg lastMsg = null;
 
         if (group.findAll().size() > 0) {
@@ -977,10 +979,6 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
                 _r.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-//                        realm.where(TrnChatMsg.class)
-//                        .equalTo("fromCollCode", collCode1)
-//                        .equalTo("toCollCode", collCode2)
-//                            ;
                         List<TrnChatMsg> list = new ArrayList<TrnChatMsg>();
 
                         Date lastDate = null;
@@ -998,8 +996,6 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
                                 header.setCreatedTimestamp(Utility.addMilliseconds(obj.getCreatedTimestamp(), -1));
                                 header.setMessageType(ConstChat.MESSAGE_TYPE_TIMESTAMP);
                                 header.setMessageStatus(ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
-
-//                                header.setSeqNo(obj.getSeqNo() - 5L);
                                 header.setMessage(Utility.convertDateToString(lastDate, "EEE, d MMM yyyy"));
 
                                 list.add(header);
@@ -1019,8 +1015,6 @@ public abstract class PushNotificationActivity extends SyncActivity implements F
                                 header.setCreatedTimestamp(Utility.addMilliseconds(obj.getCreatedTimestamp(), -1));
                                 header.setMessageType(ConstChat.MESSAGE_TYPE_TIMESTAMP);
                                 header.setMessageStatus(ConstChat.MESSAGE_STATUS_READ_AND_OPENED);
-
-//                                header.setSeqNo(obj.getSeqNo() - 5L);
                                 header.setMessage(Utility.convertDateToString(lastDate, "EEE, d MMM yyyy"));
 
                                 list.add(header);

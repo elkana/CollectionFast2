@@ -30,7 +30,36 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
-    public static void showNotificationMessage(Context context, final String title, final String message, final String timestamp, Intent intent) {
+    public static void showNotificationNews(Context context, final String title, final String message, final String timestamp, Intent intent) {
+        // Check for empty push message
+        if (TextUtils.isEmpty(message))
+            return;
+
+        // notification icon
+        final int icon = R.mipmap.ic_radana;
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        final PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        context,
+                        0,
+                        intent,
+                        0
+                );
+
+        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                context);
+
+        final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
+                + "://" + context.getPackageName() + "/raw/notification");
+
+        showSmallNotification(context, mBuilder, icon, title, message, "", resultPendingIntent, alarmSound);
+
+        playNotificationSound(context);
+//        }
+    }
+
+    public static void showNotificationChat(Context context, final String title, final String message, final String timestamp, Intent intent) {
         // Check for empty push message
         if (TextUtils.isEmpty(message))
             return;

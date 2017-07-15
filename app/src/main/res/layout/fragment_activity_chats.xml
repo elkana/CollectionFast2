@@ -14,9 +14,9 @@
     tools:showIn="@layout/activity_chats">
     <TextView
         android:id="@+id/tvSeparator"
-        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="end"
         android:paddingBottom="8dp"
         android:text="No Contracts" />
 
