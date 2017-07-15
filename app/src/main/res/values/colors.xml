@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorRadanaBlue">#201A5B</color>
+    <color name="colorRadanaDarkGreen">#188385</color>
+    <color name="colorRadanaLightGreen">#7EC34A</color>
+
+    <color name="colorPrimary">#3d2698</color>
+    <color name="colorPrimaryDark">#28166f</color>
+    <color name="colorPrimaryLight">#dad1ff</color>
+
+    <color name="colorPrimaryPaymentRcv">#28166f</color>
+    <color name="colorPrimaryVisit">#690609</color>
+    <color name="colorPrimaryRepo">#076855</color>
+
+    <color name="colorCancelSyncBG">#96ff40</color>
+    <color name="colorCancelSyncTint">#326905</color>
+    <color name="colorLKPYellow">#fff64a</color>
+    <color name="colorLKPGreen">#89ec89</color>
+    <color name="colorLKPBlue">#8f8fec</color>
+
+    <color name="colorTextReadOnly">#a6a6a6</color>
+<!--
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+-->
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="chatContact1">#303291</color>
+    <color name="chatContact2">#73233e</color>
+    <color name="chatContact3">#277283</color>
+    <color name="chatContact4">#a63e61</color>
+    <color name="chatContact5">#93303d</color>
+    <color name="chatContact6">#913428</color>
+    <color name="chatContact7">#945022</color>
+    <color name="chatContact8">#795e23</color>
+    <color name="chatContact9">#83802b</color>
+    <color name="chatContact10">#668637</color>
+    <color name="chatContact11">#457e2b</color>
+    <color name="chatContact12">#418122</color>
+    <color name="chatContact13">#1c6b33</color>
+    <color name="chatContact14">#0e742b</color>
+    <color name="chatContact15">#0f6b34</color>
+
+</resources>

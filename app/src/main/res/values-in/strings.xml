@@ -1,0 +1,68 @@
+<resources>
+
+    <string name="prompt_quit">Yakin keluar aplikasi ?</string>
+
+    <!-- Strings related to login -->
+    <string name="action_sign_in_short">Masuk</string>
+
+    <string name="error_invalid_login">User atau Password salah</string>
+    <string name="error_invalid_email">Alamat email salah</string>
+    <string name="error_invalid_password">Password terlalu pendek</string>
+    <string name="error_invalid_date">Tanggal Salah</string>
+    <string name="error_incorrect_password">Password salah</string>
+    <string name="error_field_required">Field ini harus diisi</string>
+
+    <string name="error_server_not_found">Server tidak ditemukan</string>
+    <string name="error_ptp_date">Tanggal Janji bayar harus lebih dari hari ini maks 7 hari</string>
+    <string name="error_ptp_date_range">Tanggal Janji bayar tidak bisa akhir bulan atau bulan berikutnya</string>
+
+    <!-- Strings related to Settings -->
+    <string name="language">Bahasa</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <!-- Database message -->
+    <string name="error_contact_admin">Please contact Administrator</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="error_offline">Periksa koneksi internet</string>
+    <string name="title_activity_lkp_form">LKP Detail</string>
+
+    <string name="warning_close_batch">Tanggal server berubah. Mohon lakukan proses Close Batch.</string>
+    <string name="search_hint">Search</string>
+
+    <string name="error_online_required">Proses ini membutuhkan koneksi internet\nPastikan tidak dalam kondisi Flight Mode</string>
+    <string name="error_select_rvb">Mohon pilih RVB</string>
+    <string name="error_amount_too_small">Nilai terlalu kecil</string>
+    <string name="error_amount_too_large">Nilai terlalu besar</string>
+    <string name="error_penalty_over_receive">Nilai denda tidak boleh lebih besar dari Penerimaan</string>
+    <string name="error_value_too_long">Karakter terlalu panjang</string>
+    <string name="error_amount_invalid">Nilai tidak valid</string>
+    <string name="spinner_please_select"><![CDATA[<Please select>]]></string>
+    <string name="error_invalid_phone">Nomor telepon tidak valid</string>
+    <string name="error_coll_fee_range">Input dengan nilai 0 atau 10000</string>
+    <string name="error_coll_fee_ranges">Input dengan nilai 0 atau %1$s</string>
+    <string name="error_ptp_max_month">Janji bayar harus bulan berjalan</string>
+    <string name="error_ptp_end_month">Janji bayar tidak bisa diakhir bulan</string>
+    <string name="error_sync_failed_with_msg">Sinkronisasi Gagal.\n%1$s</string>
+    <string name="error_lkp_empty">Tidak ada LKP untuk hari ini</string>
+
+    <string name="message_please_wait">Sedang diproses...</string>
+    <string name="message_sync_start">Mulai Sinkronisasi...</string>
+    <string name="message_sync_finish">Sinkronisasi Selesai.</string>
+    <string name="message_no_gps">Tidak bisa mendapatkan lokasi. Mohon aktifkan GPS.</string>
+    <string name="message_no_photo_arrival_taken">Gagal mendapatkan foto Customer di awal entri. Pastikan akses ke Camera diijinkan.</string>
+    <string name="message_sync_photo_wait">Sync Photo sedang diproses...</string>
+    <string name="message_sync_data_wait">Sync Data sedang diproses...</string>
+    <string name="error_expired_warning">Aplikasi akan kadaluarsa dalam hitunga hari.\nHubungi Administrator.</string>
+    <string name="text_takephoto_beforeentri">Mohon ambil Foto \nsaat Anda tiba di lokasi</string>
+    <string name="msg_no_contracts">Tidak ada Kontrak</string>
+    <string name="label_prev_contract">"Kontrak Sebelumnya: "</string>
+    <string name="label_today_contract">"Kontrak Hari ini: "</string>
+
+    <string name="error_uncleaned_exit">Maaf, Anda tidak melakukan Log-Out dengan benar.\nMohon nanti diulang penarikan LKP.</string>
+    <string name="error_permit_mandatory">Maaf, Anda HARUS mengijinkan akses yang diminta sebelum Sign In.</string>
+    <string name="error_permit_camera_location">Anda HARUS mengijinkan akses ke Kamera dan Lokasi.</string>
+    <string name="news_from">DARI</string>
+</resources>
