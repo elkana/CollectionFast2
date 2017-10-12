@@ -108,6 +108,7 @@
     <string name="action_reset">Reset</string>
     <string name="action_settings">Settings</string>
     <string name="action_general_info">General Information</string>
+    <string name="action_copy_clipboard">Copy To Clipboard</string>
 
 
     <!-- Database message -->
@@ -265,4 +266,6 @@
     <string name="error_permit_mandatory">You need to allow requested access to continue.</string>
     <string name="error_permit_camera_location">You need to allow access to Camera And Location to continue.</string>
     <string name="news_from">FROM</string>
+
+    <string name="pre_cancel_confirmation">Are you sure to cancel </string>
 </resources>

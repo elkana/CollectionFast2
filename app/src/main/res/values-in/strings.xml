@@ -65,4 +65,6 @@
     <string name="error_permit_mandatory">Maaf, Anda HARUS mengijinkan akses yang diminta sebelum Sign In.</string>
     <string name="error_permit_camera_location">Anda HARUS mengijinkan akses ke Kamera dan Lokasi.</string>
     <string name="news_from">DARI</string>
+
+    <string name="pre_cancel_confirmation">Batalkan entri </string>
 </resources>

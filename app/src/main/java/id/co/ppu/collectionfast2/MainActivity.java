@@ -233,7 +233,6 @@ public class MainActivity extends PushNotificationActivity
                 @Override
                 public void onFailure(Call<ResponseGetMobileConfig> call, Throwable t) {
                     Utility.dismissDialog(mProgressDialog);
-
                 }
             });
 
@@ -392,7 +391,7 @@ public class MainActivity extends PushNotificationActivity
                                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult(pickPhoto, 55);//one can be replaced with any action code
                         } else if (item == 2) {
-                            // delete
+                            // delete photo
                             Drawable icon;
                             if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                                 icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_add_a_photo_black_24dp, getTheme());
@@ -402,6 +401,14 @@ public class MainActivity extends PushNotificationActivity
 
                             Drawable drawable = AppCompatDrawableManager.get().getDrawable(MainActivity.this, R.drawable.ic_account_circle_black_24dp);
                             imageView.setImageDrawable(drawable);
+
+                            Storage.savePref(Storage.KEY_USER_PHOTO_PROFILE_URI, null);
+
+                            Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                            if (frag instanceof HomeFragment) {
+                                ((HomeFragment)frag).refreshProfile();
+                            }
+
                         }
                     }
                 });
@@ -480,6 +487,11 @@ public class MainActivity extends PushNotificationActivity
                                     uri = Uri.parse(userConfig.getPhotoProfileUri());
 
                                     imageView.setImageURI(uri);
+
+                                    Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                                    if (frag instanceof HomeFragment) {
+                                        ((HomeFragment)frag).refreshProfile();
+                                    }
                                 }
 
                             }
@@ -552,6 +564,11 @@ public class MainActivity extends PushNotificationActivity
                         uri = Uri.parse(photoProfileUri);
 
                         imageView.setImageURI(uri);
+
+                        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+                        if (frag instanceof HomeFragment) {
+                            ((HomeFragment)frag).refreshProfile();
+                        }
                     }
 
                 }
@@ -1356,7 +1373,7 @@ public class MainActivity extends PushNotificationActivity
         if (detail instanceof RealmObject) {
             final DisplayTrnLDVDetails dtl = this.realm.copyFromRealm(detail);
 
-            StringBuffer sb = new StringBuffer("Are you sure to cancel ");
+            StringBuffer sb = new StringBuffer(getString(R.string.pre_cancel_confirmation));
             sb.append(dtl.getCustName()).append(" ?\n");
 
             if (dtl.getAddress() != null)
@@ -1364,6 +1381,7 @@ public class MainActivity extends PushNotificationActivity
                         .append("/").append(dtl.getAddress().getCollKec())
                         .append("]");
 
+            //TODO: should ask for password
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Cancel Sync")
@@ -1668,6 +1686,8 @@ public class MainActivity extends PushNotificationActivity
             return;
         }
 
+        Fragment activeFrag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+
         switch (requestCode) {
             case 999:
                 /*
@@ -1693,21 +1713,29 @@ public class MainActivity extends PushNotificationActivity
                     final ImageView imageView = ButterKnife.findById(v, R.id.imageView);
 
                     imageView.setImageBitmap(BitmapFactory.decodeStream(ims));
+
                 } catch (FileNotFoundException e) {
                     return;
                 }
 
-                this.realm.executeTransactionAsync(new Realm.Transaction() {
+                Storage.savePref(Storage.KEY_USER_PHOTO_PROFILE_URI, imageUri.toString());
+                /*
+                this.realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         UserConfig userConfig = realm.where(UserConfig.class).findFirst();
                         if (userConfig != null) {
-                            userConfig.setPhotoProfileUri(imageUri.toString());
+                            userConfig.getccsetPhotoProfileUri(imageUri.toString());
                         }
 
                         realm.copyToRealmOrUpdate(userConfig);
                     }
                 });
+                */
+
+                if (activeFrag instanceof HomeFragment) {
+                    ((HomeFragment)activeFrag).refreshProfile();
+                }
 
                 break;
             case 55:
@@ -1717,6 +1745,7 @@ public class MainActivity extends PushNotificationActivity
                 final Uri selectedImage = data.getData();
                 imageView.setImageURI(selectedImage);
 
+                /*
                 this.realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -1728,6 +1757,12 @@ public class MainActivity extends PushNotificationActivity
                         realm.copyToRealmOrUpdate(userConfig);
                     }
                 });
+                */
+                Storage.savePref(Storage.KEY_USER_PHOTO_PROFILE_URI, selectedImage.toString());
+
+                if (activeFrag instanceof HomeFragment) {
+                    ((HomeFragment)activeFrag).refreshProfile();
+                }
 
                 break;
             case 66:

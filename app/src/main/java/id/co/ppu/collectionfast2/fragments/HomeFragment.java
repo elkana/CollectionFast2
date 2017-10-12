@@ -1,16 +1,20 @@
 package id.co.ppu.collectionfast2.fragments;
 
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import id.co.ppu.collectionfast2.R;
 import id.co.ppu.collectionfast2.util.Storage;
 import id.co.ppu.collectionfast2.util.Utility;
@@ -46,6 +50,11 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.etPhone)
     EditText etPhone;
 
+    @BindView(R.id.profile_image)
+    CircleImageView profileImage;
+
+    //        final CircleImageView profileImage = ButterKnife.findById(v, R.id.profile_image);
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -77,6 +86,28 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    public void refreshProfile() {
+
+        // 18sep17 disable krn mau buat demo ke BFI. lagian foto di tab s2 masih kebalik ntah ga tau knp
+        if (true)
+            return;
+
+        String photoProfileUri = Storage.getPref(Storage.KEY_USER_PHOTO_PROFILE_URI, null);
+        if (photoProfileUri != null) {
+            Uri uri;
+            uri = Uri.parse(photoProfileUri);
+            profileImage.setImageURI(uri);
+            profileImage.setVisibility(View.VISIBLE);
+
+            Animation animZoomIn = AnimationUtils.loadAnimation(getActivity(), R.anim.zoom_in);
+            profileImage.startAnimation(animZoomIn);
+        } else {
+            profileImage.setVisibility(View.INVISIBLE);
+
+        }
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,6 +120,8 @@ public class HomeFragment extends Fragment {
 
 //        LoginInfo userData = (LoginInfo) Storage.getPreference(Storage.KEY_USER, null);
 //        UserData userData = (UserData) Storage.getObjPreference(getContext(), Storage.KEY_USER, UserData.class);
+
+        refreshProfile();
 
         etJabatan.setText(Storage.getPref(Storage.KEY_USER_JABATAN, null));
         etNIKNo.setText(Storage.getPref(Storage.KEY_USER_NIK, null));
