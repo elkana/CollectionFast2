@@ -80,9 +80,13 @@ public class ActivityUploadPictureGeo extends BasicActivity {
     private ProgressDialog mProgressDialog = null;
 
     private final CharSequence[] menuItems = {
-            "From Camera", "From Gallery", "Delete Photo"
+            "From Camera", "Delete Photo"
     };
 
+//    private final CharSequence[] menuItems = {
+//            "From Camera", "From Gallery", "Delete Photo"
+//    };
+//
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     @BindView(R.id.ivUpload1)
@@ -307,12 +311,12 @@ public class ActivityUploadPictureGeo extends BasicActivity {
                     }
 
 
+//                } else if (item == 1) {
+//                    // from gallery
+//                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+//                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pickPhoto, returnCodeFromGallery);//one can be replaced with any action code
                 } else if (item == 1) {
-                    // from gallery
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, returnCodeFromGallery);//one can be replaced with any action code
-                } else if (item == 2) {
                     // delete
                     Drawable icon;
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {

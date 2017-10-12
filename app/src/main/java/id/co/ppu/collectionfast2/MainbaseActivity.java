@@ -39,12 +39,12 @@ public abstract class MainbaseActivity extends BasicActivity {
     protected abstract void displayView(int viewId);
 
 
-    protected void confirmPassword(final OnApproveListener listener) {
+    protected void confirmPassword(String title, boolean showKeyboard, final OnApproveListener listener) {
         View promptsView = LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null);
         final EditText input = ButterKnife.findById(promptsView, R.id.password);
 
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.dialog_cancel))
+                .setTitle(title)
                 .setMessage(getString(R.string.prompt_your_password))
                 .setView(promptsView)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -78,6 +78,9 @@ public abstract class MainbaseActivity extends BasicActivity {
                     }
                 })
                 .show();
+
+        if (showKeyboard)
+            Utility.showKeyboard(input);
 
     }
 

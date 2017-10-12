@@ -39,12 +39,10 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -744,6 +742,15 @@ public class MainActivity extends PushNotificationActivity
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                    confirmPassword("Reset Data", true, new OnApproveListener() {
+                        @Override
+                        public void onApprove() {
+                            resetData();
+                            backToLoginScreen();
+                        }
+                    });
+
+                    /*
                     View promptsView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_pwd, null);
                     final EditText input = ButterKnife.findById(promptsView, R.id.password);
 
@@ -773,7 +780,7 @@ public class MainActivity extends PushNotificationActivity
                             })
                             .show()
                     ;
-
+*/
                 }
             });
 
@@ -1382,7 +1389,7 @@ public class MainActivity extends PushNotificationActivity
                         .append("/").append(dtl.getAddress().getCollKec())
                         .append("]");
 
-            confirmPassword(new OnApproveListener() {
+            confirmPassword(getString(R.string.dialog_cancel, "LKP"), false, new OnApproveListener() {
                 @Override
                 public void onApprove() {
                     cancelSync(realm, dtl.getLdvNo(), dtl.getContractNo());
@@ -2333,6 +2340,38 @@ public class MainActivity extends PushNotificationActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+
+                confirmPassword("Close Batch", true, new OnApproveListener() {
+                    @Override
+                    public void onApprove() {
+                        boolean anyDataToSync = anyDataToSync();
+
+                        if (anyDataToSync) {
+                            syncTransaction(false, new OnSuccessError() {
+                                @Override
+                                public void onSuccess(String msg) {
+                                    // close batch here
+                                    closeBatch();
+
+                                }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                }
+
+                                @Override
+                                public void onSkip() {
+                                }
+                            });
+                            return;
+                        }
+
+                        // brarti ijo semua, close
+                        closeBatch();
+
+                    }
+                });
+/*
                 View promptsView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_pwd, null);
                 final EditText input = ButterKnife.findById(promptsView, R.id.password);
 
@@ -2376,36 +2415,6 @@ public class MainActivity extends PushNotificationActivity
 
                                 // brarti ijo semua, close
                                 closeBatch();
-/*
-                                // TODO: clear cookie
-                                syncTransaction(true, true, new OnSuccessError() {
-                                    @Override
-                                    public void onSuccess(String msg) {
-                                        Utility.createAndShowProgressDialog(MainActivity.this, "Close Batch", "Close Batch Success");
-
-                                        clearLKPTables();
-                                        clearSyncTables();
-
-                                        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-
-                                        if (frag != null && frag instanceof FragmentLKPList) {
-                                            ((FragmentLKPList) frag).clearTodayList();
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Throwable throwable) {
-
-                                    }
-
-                                    @Override
-                                    public void onSkip() {
-
-                                    }
-                                });
-                                */
-
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -2422,8 +2431,7 @@ public class MainActivity extends PushNotificationActivity
                         Utility.hideKeyboard(input);
                     }
                 });
-
-                Utility.showKeyboard(input);
+*/
 
             }
         });
