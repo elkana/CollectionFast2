@@ -1,15 +1,20 @@
 <resources>
 
+    <string name="prompt">Anda yakin ?</string>
     <string name="prompt_quit">Yakin keluar aplikasi ?</string>
+    <string name="prompt_password">Kata Kunci</string>
+    <string name="prompt_your_password">Masukkan Kata Kunci</string>
+    <string name="remember_pwd">Ingat Kata Kunci</string>
 
     <!-- Strings related to login -->
     <string name="action_sign_in_short">Masuk</string>
+    <string name="action_penalty">Tunggu %1s</string>
 
-    <string name="error_invalid_login">User atau Password salah</string>
+    <string name="error_invalid_login">User atau Kata Kunci salah</string>
     <string name="error_invalid_email">Alamat email salah</string>
-    <string name="error_invalid_password">Password terlalu pendek</string>
+    <string name="error_invalid_password">Kata Kunci terlalu pendek</string>
     <string name="error_invalid_date">Tanggal Salah</string>
-    <string name="error_incorrect_password">Password salah</string>
+    <string name="error_incorrect_password">Kata Kunci salah</string>
     <string name="error_field_required">Field ini harus diisi</string>
 
     <string name="error_server_not_found">Server tidak ditemukan</string>
@@ -28,6 +33,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="error_offline">Periksa koneksi internet</string>
     <string name="title_activity_lkp_form">LKP Detail</string>
+
+    <string name="dialog_cancel">Batalkan %1s</string>
 
     <string name="warning_close_batch">Tanggal server berubah. Mohon lakukan proses Close Batch.</string>
     <string name="search_hint">Search</string>
@@ -67,4 +74,5 @@
     <string name="news_from">DARI</string>
 
     <string name="pre_cancel_confirmation">Batalkan entri </string>
+
 </resources>

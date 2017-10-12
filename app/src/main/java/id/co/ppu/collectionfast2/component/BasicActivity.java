@@ -183,11 +183,13 @@ public class BasicActivity extends AppCompatActivity {
         }
     */
     protected String getDebugInfo() {
-        TelephonyManager mngr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
 
         StringBuffer sb = new StringBuffer();
-        sb.append("imei=").append(mngr.getDeviceId());
         try {
+            TelephonyManager mngr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+
+            sb.append("imei=").append(mngr.getDeviceId());
+
             Class<?> c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", String.class);
             String serial1 = (String) get.invoke(c, "ril.serialnumber");

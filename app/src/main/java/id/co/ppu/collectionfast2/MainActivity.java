@@ -77,6 +77,7 @@ import id.co.ppu.collectionfast2.fragments.FragmentChatActiveContacts;
 import id.co.ppu.collectionfast2.fragments.FragmentChatWith;
 import id.co.ppu.collectionfast2.fragments.HomeFragment;
 import id.co.ppu.collectionfast2.job.SyncJob;
+import id.co.ppu.collectionfast2.listener.OnApproveListener;
 import id.co.ppu.collectionfast2.listener.OnPostRetrieveLKP;
 import id.co.ppu.collectionfast2.listener.OnPostRetrieveServerInfo;
 import id.co.ppu.collectionfast2.listener.OnSuccessError;
@@ -1381,7 +1382,20 @@ public class MainActivity extends PushNotificationActivity
                         .append("/").append(dtl.getAddress().getCollKec())
                         .append("]");
 
-            //TODO: should ask for password
+            confirmPassword(new OnApproveListener() {
+                @Override
+                public void onApprove() {
+                    cancelSync(realm, dtl.getLdvNo(), dtl.getContractNo());
+
+                    Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+
+                    if (frag != null && frag instanceof FragmentLKPList) {
+                        ((FragmentLKPList) frag).refresh();
+                    }
+
+                }
+            });
+/*
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Cancel Sync")
@@ -1402,6 +1416,7 @@ public class MainActivity extends PushNotificationActivity
                     })
                     .setNegativeButton("No", null)
                     .show();
+                    */
         }
     }
 
@@ -2311,7 +2326,7 @@ public class MainActivity extends PushNotificationActivity
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Close Batch");
 
-        alertDialogBuilder.setMessage("Are you sure?");
+        alertDialogBuilder.setMessage(getString(R.string.prompt));
         //null should be your on click listener
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
@@ -2322,7 +2337,7 @@ public class MainActivity extends PushNotificationActivity
                 final EditText input = ButterKnife.findById(promptsView, R.id.password);
 
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Type Your Password")
+                        .setTitle(getString(R.string.prompt_your_password))
                         .setView(promptsView)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
@@ -2333,7 +2348,7 @@ public class MainActivity extends PushNotificationActivity
                                 String value = input.getText().toString();
                                 final String userPwd = Storage.getPref(Storage.KEY_PASSWORD, null);
                                 if (!value.equals(userPwd)) {
-                                    Snackbar.make(coordinatorLayout, "Invalid password !", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(coordinatorLayout, getString(R.string.error_incorrect_password), Snackbar.LENGTH_LONG).show();
                                     return;
                                 }
 

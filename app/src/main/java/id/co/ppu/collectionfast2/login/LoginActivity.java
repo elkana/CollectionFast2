@@ -9,6 +9,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -39,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,6 +85,8 @@ public class LoginActivity extends BasicActivity {
 
     private static final String TAG = "login";
 
+    private int penaltyCounter = -3;
+    private static final int PENALTY_WAIT_MILLISECONDS = 10000;
 
     // UI references.
     @BindView(R.id.tilUsername)
@@ -98,6 +103,9 @@ public class LoginActivity extends BasicActivity {
 
     @BindView(R.id.password)
     EditText mPasswordView;
+
+    @BindView(R.id.sign_in_button)
+    Button signInButton;
 
     @BindView(R.id.spServers)
     Spinner spServers;
@@ -689,6 +697,18 @@ public class LoginActivity extends BasicActivity {
 
                                     Utility.dismissDialog(mProgressDialog);
 
+                                    if (respLogin.getError().getErrorCode().equals("401")) {
+                                        penaltyCounter++;
+
+                                        if (penaltyCounter >= 0) {
+                                            signInButton.setEnabled(false);
+
+                                            // start timer
+                                            startTimer();
+                                        }
+
+                                    }
+
                                 } else {
                                     // dump
                                     LoginActivity.this.realm.executeTransactionAsync(new Realm.Transaction() {
@@ -919,6 +939,26 @@ public class LoginActivity extends BasicActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    private void startTimer() {
+        new Handler().post(new Runnable() {
+            public void run() {
+                // count down timer start, ditambah jumlah penalty
+                new CountDownTimer(PENALTY_WAIT_MILLISECONDS + (penaltyCounter *1000), 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        long t = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+
+                        signInButton.setText(getString(R.string.action_penalty, String.valueOf(t)));
+                    }
+
+                    public void onFinish() {
+                        signInButton.setText(getString(R.string.action_sign_in));
+                        signInButton.setEnabled(true);
+                    }
+                }.start();
+            }
+        });
     }
 
     @Override

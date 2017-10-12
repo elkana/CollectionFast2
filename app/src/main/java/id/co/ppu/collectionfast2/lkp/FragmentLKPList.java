@@ -583,13 +583,13 @@ public class FragmentLKPList extends Fragment {
                 tvKelKec.setText("Kel/Kec: " +detail.getAddress().getCollKel() + "/" + detail.getAddress().getCollKec());
             }
 
-            TextView tvContactShortName = dataViewHolder.tvContactShortName;
-            tvContactShortName.setText(Utility.getFirstTwoChars(detail.getCustName()).toUpperCase());
+            TextView tvContactCircle = dataViewHolder.tvContactShortName;
+            tvContactCircle.setText(Utility.getFirstTwoChars(detail.getCustName()).toUpperCase());
             Typeface font = Typeface.createFromAsset(getActivity().getAssets(), Utility.FONT_SAMSUNG);
-            tvContactShortName.setTypeface(font);
+            tvContactCircle.setTypeface(font);
 
             // http://stackoverflow.com/questions/17823451/set-android-shape-color-programmatically
-            Drawable background = tvContactShortName.getBackground();
+            Drawable background = tvContactCircle.getBackground();
             if (background instanceof GradientDrawable) {
                 // cast to 'ShapeDrawable'
                 GradientDrawable shapeDrawable = (GradientDrawable) background;
@@ -598,6 +598,7 @@ public class FragmentLKPList extends Fragment {
 
                 int resColor = R.color.chatContact1;
 
+                /*
                 if (position == 1)
                     resColor = R.color.chatContact2;
                 else if (position == 2)
@@ -626,6 +627,7 @@ public class FragmentLKPList extends Fragment {
                     resColor = R.color.chatContact14;
                 else if (position == 14)
                     resColor = R.color.chatContact15;
+                */
 
                 shapeDrawable.setColor(ContextCompat.getColor(getContext(), resColor));
 
