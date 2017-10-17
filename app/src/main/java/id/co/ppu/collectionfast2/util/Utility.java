@@ -44,7 +44,7 @@ import okhttp3.HttpUrl;
 public class Utility {
 
     // TODO: always check versioncode inside gradle on production, and build.gradle to enable com.google.gms.google-services plugin at the bottom
-    public final static boolean DEVELOPER_MODE = true;
+    public final static boolean DEVELOPER_MODE = false;
 
     public final static String DATE_EXPIRED_YYYYMMDD = DEVELOPER_MODE ? "20201231" : "20361231"; // 20 years
 
@@ -597,7 +597,7 @@ public class Utility {
                 Method get = c.getMethod("get", String.class);
                 String serial1 = (String) get.invoke(c, "ril.serialnumber");
                 String id = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
-                sb.append(",").append("deviceSN=").append(serial1);
+                sb.append(",").append("deviceSN=").append(TextUtils.isEmpty(serial1) ? android.os.Build.SERIAL : serial1);
                 sb.append(",").append("androidId=").append(id);
 
                 LocationManager lm = (LocationManager)ctx.getSystemService(Context.LOCATION_SERVICE);

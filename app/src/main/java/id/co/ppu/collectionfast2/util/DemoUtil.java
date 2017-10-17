@@ -532,6 +532,13 @@ public class DemoUtil {
         addresses.add(generateTrnCollAddress("71000000034615", 1L, collCode, "DESA TIRTO RAHARJO", "004", "003", "30975016", "Tirto Raharjo", "3201070", "Muara Padang", "3201", "Kab Banyu Asin", "30975", "016", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "082375838457", null, "RASIDIN", "082375838547", "RASIDIN", createdBy, createdTimestamp, officeCode));
         addresses.add(generateTrnCollAddress("71000900029814", 1L, collCode, "LORONG SENTOSA JAYA NOMOR 1123", "029", "007", "30266001", "Tangga Takat", "3220140", "SeberangUluIi", "3220", "Kota Palembang Plaju", "30266", "001", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "082183047537", null, "SUNIK", "082183047537", "SUNIK", createdBy, createdTimestamp, officeCode));
         addresses.add(generateTrnCollAddress("71000000349714", 1L, collCode, "JLN JOKO ATAS NO 927", "027", "011", "30143001", "29Ilir", "3220040", "IlirBaratIi", "3220", "Kota Palembang Plaju", "30143", "001", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "08127303577", null, "BUSRON", null, "BUSRON", createdBy, createdTimestamp, officeCode));
+
+        // utk contract bucket
+        addresses.add(generateTrnCollAddress("11000000327715", 1L, collCode, "DESA GADING SERPONG", "014", "013", "30975016", "Tirto Raharjo", "3201070", "Muara Padang", "3201", "Kab Banyu Asin", "30975", "016", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "0812345678", null, "MAPURO", "0812345678", "MAPURO", createdBy, createdTimestamp, officeCode));
+        addresses.add(generateTrnCollAddress("11000000470415", 1L, collCode, "MAKMUR JAYA II/22", "019", "017", "30266001", "Tangga Takat", "3220140", "SeberangUluIi", "3220", "Kota Palembang Plaju", "30266", "001", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "0887654321", null, "ZULKIFLI", "0887654321", "ZULKIFLI", createdBy, createdTimestamp, officeCode));
+        addresses.add(generateTrnCollAddress("11000000523316", 1L, collCode, "JLN LETJEN SUPARMAN No. 4", "017", "012", "30143001", "29Ilir", "3220040", "IlirBaratIi", "3220", "Kota Palembang Plaju", "30143", "001", "32", "Prop Sumatera Selatan", "0711", "0", null, null, "08122223333", null, "RASIMAN", null, "RASIMAN", createdBy, createdTimestamp, officeCode));
+
+
         data.setAddress(addresses);
 
         List<TrnBastbj> bastbjs = new ArrayList<TrnBastbj>();

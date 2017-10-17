@@ -138,7 +138,8 @@
         <activity
             android:name=".poa.ActivityPoA"
             android:screenOrientation="portrait" />
-        <activity android:name=".news.ActivityNews"></activity>
+        <activity android:name=".news.ActivityNews" />
+        <activity android:name=".ActivityHelpWeb"></activity>
     </application>
 
 </manifest>

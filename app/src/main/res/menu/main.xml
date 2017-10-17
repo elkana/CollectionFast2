@@ -55,5 +55,11 @@
         android:title="Reset Local Data"
         app:showAsAction="never">
     </item>
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="103"
+        android:title="@string/action_help"
+        app:showAsAction="never">
+    </item>
 
 </menu>

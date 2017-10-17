@@ -2,7 +2,9 @@ package id.co.ppu.collectionfast2.payment.receive;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,10 +18,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ppu.collectionfast2.R;
+import id.co.ppu.collectionfast2.adapter.AdapterAlasan;
+import id.co.ppu.collectionfast2.adapter.AdapterKlasifikasi;
 import id.co.ppu.collectionfast2.component.BasicActivity;
 import id.co.ppu.collectionfast2.component.RVBAdapter;
 import id.co.ppu.collectionfast2.location.Location;
 import id.co.ppu.collectionfast2.pojo.ServerInfo;
+import id.co.ppu.collectionfast2.pojo.master.MstDelqReasons;
+import id.co.ppu.collectionfast2.pojo.master.MstLDVClassifications;
 import id.co.ppu.collectionfast2.pojo.master.MstParam;
 import id.co.ppu.collectionfast2.pojo.sync.SyncTrnRVB;
 import id.co.ppu.collectionfast2.pojo.sync.SyncTrnRVColl;
@@ -102,6 +108,13 @@ public class ActivityPaymentReceive extends BasicActivity {
     @BindView(R.id.pulsator)
     PulsatorLayout pulsator;
 
+    // 17 oct 17
+    @BindView(R.id.spKlasifikasi)
+    Spinner spKlasifikasi;
+
+    @BindView(R.id.spAlasan)
+    Spinner spAlasan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +158,45 @@ public class ActivityPaymentReceive extends BasicActivity {
         etAngsuranKe.setText(String.valueOf(dtl.getInstNo() + 1));
         etPlatform.setText(dtl.getPlatform());
 
+
+        RealmResults<MstLDVClassifications> rrLkpKlasifikasi = this.realm.where(MstLDVClassifications.class).findAll();
+        List<MstLDVClassifications> lkpKlasifikasi = this.realm.copyFromRealm(rrLkpKlasifikasi);
+        AdapterKlasifikasi adapterKlasifikasi = new AdapterKlasifikasi(this, android.R.layout.simple_spinner_item, lkpKlasifikasi);
+        MstLDVClassifications hintKlasifikasi = new MstLDVClassifications();
+        hintKlasifikasi.setDescription(getString(R.string.spinner_please_select));
+        adapterKlasifikasi.insert(hintKlasifikasi, 0);
+        spKlasifikasi.setAdapter(adapterKlasifikasi);
+        spKlasifikasi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                updatePotensiList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        RealmResults<MstDelqReasons> rrAlasan = this.realm.where(MstDelqReasons.class).findAll();
+        List<MstDelqReasons> lkpAlasan = this.realm.copyFromRealm(rrAlasan);
+        AdapterAlasan adapterAlasan = new AdapterAlasan(this, android.R.layout.simple_spinner_item, lkpAlasan);
+        MstDelqReasons hintAlasan = new MstDelqReasons();
+        hintAlasan.setDescription(getString(R.string.spinner_please_select));
+        adapterAlasan.insert(hintAlasan, 0);
+        spAlasan.setAdapter(adapterAlasan);
+        spAlasan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                updatePotensiList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         // load last save
         TrnRVColl trnRVColl = isExists(this.realm);
 
@@ -165,10 +217,23 @@ public class ActivityPaymentReceive extends BasicActivity {
             etDenda.setText(String.valueOf(trnRVColl.getPenaltyAc()));
 //            etDendaBerjalan.setText(String.valueOf(trnRVColl.getDaysIntrAc()));
             etBiayaTagih.setText(String.valueOf(trnRVColl.getCollFeeAc()));
-            etDanaSosial.setText("0");
+            etDanaSosial.setText("Rp. 0");
 
-//            flTakePhoto.setVisibility(View.GONE);
-//            svMain.setVisibility(View.VISIBLE);
+            String classCode = trnRVColl.getClassCode();
+            for (int i = 0; i < adapterKlasifikasi.getCount(); i++) {
+                if (classCode.equals(adapterKlasifikasi.getItem(i).getClassCode())) {
+                    spKlasifikasi.setSelection(i);
+                    break;
+                }
+            }
+
+            String delqCode = trnRVColl.getDelqCode();
+            for (int i = 0; i < adapterAlasan.getCount(); i++) {
+                if (delqCode.equals(adapterAlasan.getItem(i).getDelqCode())) {
+                    spAlasan.setSelection(i);
+                    break;
+                }
+            }
 
         } else {
             RealmResults<TrnRVB> openRVBList = this.realm.where(TrnRVB.class)
@@ -245,9 +310,28 @@ public class ActivityPaymentReceive extends BasicActivity {
         final String dendaBerjalan = etDendaBerjalan.getText().toString().trim();
         final String biayaTagih = etBiayaTagih.getText().toString().trim();
 
+        String sAlasan = spAlasan.getSelectedItem().toString();
+        MstDelqReasons delqReasons = realm.where(MstDelqReasons.class).equalTo("description", sAlasan).findFirst();
+        String sKlasifikasi = spKlasifikasi.getSelectedItem().toString();
+        MstLDVClassifications ldvClassifications = realm.where(MstLDVClassifications.class).equalTo("description", sKlasifikasi).findFirst();
+        final String delqCode = delqReasons == null ? "" : delqReasons.getDelqCode();
+        final String classCode = ldvClassifications == null ? "" : ldvClassifications.getClassCode();
+
         if (etCatatan.getText().toString().length() > 300) {
             etCatatan.setError("Should not over " + 300);
             focusView = etCatatan;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(delqCode)) {
+            Toast.makeText(this, getString(R.string.prompt_select, "Alasan"), Toast.LENGTH_SHORT).show();
+            focusView = spAlasan;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(classCode)) {
+            Toast.makeText(this, getString(R.string.prompt_select, "Klasifikasi"), Toast.LENGTH_SHORT).show();
+            focusView = spKlasifikasi;
             cancel = true;
         }
 
@@ -257,13 +341,13 @@ public class ActivityPaymentReceive extends BasicActivity {
                 .findFirst();
 
         if (selectedRVB == null) {
-            Toast.makeText(this, "Please select No RV !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "No RV !"), Toast.LENGTH_SHORT).show();
             focusView = spNoRVB;
             cancel = true;
         } else {
             // cek dulu apakah TrnRVBnya udah CL atau masih OP ?
             if (!editMode && selectedRVB.getRvbStatus().equals("CL")) {
-                Toast.makeText(this, "The selected No RV is already used.\nPlease select another !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_rvb_used), Toast.LENGTH_SHORT).show();
                 focusView = spNoRVB;
                 cancel = true;
             }
@@ -303,19 +387,19 @@ public class ActivityPaymentReceive extends BasicActivity {
 
                     if (batas < minDendaValue) {
                         if (dendaValue != batas) {
-                            etDenda.setError("Denda should be " + batas);
+                            etDenda.setError("Denda should be " + Utility.convertLongToRupiah(batas));
                             focusView = etDenda;
                             cancel = true;
 
                         }
                     } else {
                         if (dendaValue < minDendaValue) {
-                            etDenda.setError("Should not under " + minDendaValue);
+                            etDenda.setError("Should not under " + Utility.convertLongToRupiah(minDendaValue));
                             focusView = etDenda;
                             cancel = true;
                         }
                         if (dendaValue > batas) {
-                            etDenda.setError("Should not above " + batas);
+                            etDenda.setError("Should not above " + Utility.convertLongToRupiah(batas));
                             focusView = etDenda;
                             cancel = true;
                         }
@@ -589,6 +673,11 @@ public class ActivityPaymentReceive extends BasicActivity {
                 trnRVColl.setReceivedAmount(Long.valueOf(penerimaan));
                 trnRVColl.setLastupdateBy(Utility.LAST_UPDATE_BY);
                 trnRVColl.setLastupdateTimestamp(new Date());
+
+                // 17 oct 2017
+                trnRVColl.setDelqCode(delqCode);
+                trnRVColl.setClassCode(classCode);
+
                 realm.copyToRealm(trnRVColl);
 
             }
@@ -607,7 +696,7 @@ public class ActivityPaymentReceive extends BasicActivity {
 
                 PoAUtil.commit(ActivityPaymentReceive.this, collectorId, ldvNo, contractNo);
 
-                Toast.makeText(ActivityPaymentReceive.this, "Payment Saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityPaymentReceive.this, getString(R.string.message_data_saved, "Payment"), Toast.LENGTH_SHORT).show();
 
             }
         }, new Realm.Transaction.OnError() {
@@ -620,11 +709,12 @@ public class ActivityPaymentReceive extends BasicActivity {
                         .append(",dendaBerjalan=").append(dendaBerjalan)
                         .append(",biayaTagih=").append(penerimaan)
                         .append(",rvbNo=").append(rvbNo)
+                        .append(",delqCode=").append(delqCode)
+                        .append(",classCode=").append(classCode)
                         .append(",serverDate=").append(serverDate)
                 ;
 
                 NetUtil.syncLogError(getBaseContext(), realm, collectorId, "PaymentReceive", error.getMessage(), message2.toString());
-
                 Toast.makeText(ActivityPaymentReceive.this, "Database Error", Toast.LENGTH_LONG).show();
                 Snackbar.make(activityPaymentReceive, error.getMessage(), Snackbar.LENGTH_LONG).show();
             }

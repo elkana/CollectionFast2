@@ -83,7 +83,7 @@ public class ActivityDetailsLKPSummary extends BasicActivity {
         final ProgressDialog mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("Please wait...");
+        mProgressDialog.setMessage(getString(R.string.message_please_wait));
         mProgressDialog.show();
 
         etNoLKP.setText(header.getLdvNo());

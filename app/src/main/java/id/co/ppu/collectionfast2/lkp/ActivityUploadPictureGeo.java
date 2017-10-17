@@ -578,7 +578,7 @@ public class ActivityUploadPictureGeo extends BasicActivity {
         }
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("Please wait...");
+        mProgressDialog.setMessage(getString(R.string.message_please_wait));
         mProgressDialog.show();
 
         uploadPicture1();

@@ -31,6 +31,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ppu.collectionfast2.R;
+import id.co.ppu.collectionfast2.adapter.AdapterAlasan;
+import id.co.ppu.collectionfast2.adapter.AdapterKlasifikasi;
 import id.co.ppu.collectionfast2.component.BasicActivity;
 import id.co.ppu.collectionfast2.location.Location;
 import id.co.ppu.collectionfast2.pojo.ServerInfo;
@@ -185,7 +187,7 @@ public class ActivityVisitResult extends BasicActivity {
 
         RealmResults<MstLDVClassifications> rrLkpKlasifikasi = this.realm.where(MstLDVClassifications.class).findAll();
         List<MstLDVClassifications> lkpKlasifikasi = this.realm.copyFromRealm(rrLkpKlasifikasi);
-        KlasifikasiAdapter adapterKlasifikasi = new KlasifikasiAdapter(this, android.R.layout.simple_spinner_item, lkpKlasifikasi);
+        AdapterKlasifikasi adapterKlasifikasi = new AdapterKlasifikasi(this, android.R.layout.simple_spinner_item, lkpKlasifikasi);
         MstLDVClassifications hintKlasifikasi = new MstLDVClassifications();
         hintKlasifikasi.setDescription(getString(R.string.spinner_please_select));
         adapterKlasifikasi.insert(hintKlasifikasi, 0);
@@ -204,7 +206,7 @@ public class ActivityVisitResult extends BasicActivity {
 
         RealmResults<MstDelqReasons> rrAlasan = this.realm.where(MstDelqReasons.class).findAll();
         List<MstDelqReasons> lkpAlasan = this.realm.copyFromRealm(rrAlasan);
-        AlasanAdapter adapterAlasan = new AlasanAdapter(this, android.R.layout.simple_spinner_item, lkpAlasan);
+        AdapterAlasan adapterAlasan = new AdapterAlasan(this, android.R.layout.simple_spinner_item, lkpAlasan);
         MstDelqReasons hintAlasan = new MstDelqReasons();
         hintAlasan.setDescription(getString(R.string.spinner_please_select));
         adapterAlasan.insert(hintAlasan, 0);
@@ -259,7 +261,6 @@ public class ActivityVisitResult extends BasicActivity {
                 }
             }
 
-
             String classCode = trnLDVComments.getClassCode();
             for (int i = 0; i < adapterKlasifikasi.getCount(); i++) {
                 if (classCode.equals(adapterKlasifikasi.getItem(i).getClassCode())) {
@@ -274,7 +275,8 @@ public class ActivityVisitResult extends BasicActivity {
                     spAlasan.setSelection(i);
                     break;
                 }
-            }/*
+            }
+            /*
             spAlasan.post(new Runnable() {
                 @Override
                 public void run() {
@@ -404,7 +406,7 @@ public class ActivityVisitResult extends BasicActivity {
 //        final String potensi = ldvClassifications == null ? "" : ldvClassifications.getClassCode();
 
         if (TextUtils.isEmpty(lkpFlag)) {
-            Toast.makeText(this, "Please select LKP Flag", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "LKP Flag"), Toast.LENGTH_SHORT).show();
 //            spLKPFlags.setError(getString(R.string.error_field_required));
             focusView = spLKPFlags;
             cancel = true;
@@ -477,13 +479,13 @@ public class ActivityVisitResult extends BasicActivity {
         }
 
         if (TextUtils.isEmpty(delqCode)) {
-            Toast.makeText(this, "Please select Alasan", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "Alasan"), Toast.LENGTH_SHORT).show();
             focusView = spAlasan;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(classCode)) {
-            Toast.makeText(this, "Please select Klasifikasi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "Klasifikasi"), Toast.LENGTH_SHORT).show();
             focusView = spKlasifikasi;
             cancel = true;
         }
@@ -507,7 +509,7 @@ public class ActivityVisitResult extends BasicActivity {
         }
 
         if (potensiObj == null || TextUtils.isEmpty(potensiObj.getClassCode())) {
-            Toast.makeText(this, "Please select Potensi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "Potensi"), Toast.LENGTH_SHORT).show();
             focusView = spPotensi;
             cancel = true;
 
@@ -516,7 +518,7 @@ public class ActivityVisitResult extends BasicActivity {
         }
 
         if (tindakSelanjutnyaObj == null || TextUtils.isEmpty(tindakSelanjutnyaObj.getValue())) {
-            Toast.makeText(this, "Please select Tindak Selanjutnya", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "Tindak Selanjutnya"), Toast.LENGTH_SHORT).show();
             focusView = spTindakSelanjutnya;
             cancel = true;
 
@@ -686,7 +688,7 @@ public class ActivityVisitResult extends BasicActivity {
 
                 PoAUtil.commit(ActivityVisitResult.this, collectorId, ldvNo, contractNo);
 
-                Toast.makeText(ActivityVisitResult.this, "Data saved !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityVisitResult.this, getString(R.string.message_data_saved, "Data"), Toast.LENGTH_SHORT).show();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -697,7 +699,6 @@ public class ActivityVisitResult extends BasicActivity {
                         .append(",actionPlan=").append(((MstParam) spTindakSelanjutnya.getSelectedItem()).getValue())
                         .append(",lkpFlag=").append(lkpFlag)
                         .append(",delqCode=").append(delqCode)
-                        .append(",classCode=").append(classCode)
                         .append(",classCode=").append(classCode)
                         .append(",serverDate=").append(serverDate)
                 ;
@@ -753,7 +754,7 @@ public class ActivityVisitResult extends BasicActivity {
 
     }
     */
-
+/*
     public class KlasifikasiAdapter extends ArrayAdapter<MstLDVClassifications> {
         private Context ctx;
         private List<MstLDVClassifications> list;
@@ -804,7 +805,7 @@ public class ActivityVisitResult extends BasicActivity {
             return position;
         }
     }
-
+*/
     public class LKPParameterAdapter extends ArrayAdapter<MstLDVParameters> {
         private Context ctx;
         private List<MstLDVParameters> list;
@@ -854,7 +855,7 @@ public class ActivityVisitResult extends BasicActivity {
             return position;
         }
     }
-
+/*
     public class AlasanAdapter extends ArrayAdapter<MstDelqReasons> {
         private Context ctx;
         private List<MstDelqReasons> list;
@@ -907,7 +908,7 @@ public class ActivityVisitResult extends BasicActivity {
             return position;
         }
     }
-
+*/
     public class PotensiAdapter extends ArrayAdapter<MstPotensi> {
         private Context ctx;
         private List<MstPotensi> list;

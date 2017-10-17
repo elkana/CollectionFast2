@@ -161,7 +161,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:hint="Denda"
+                            android:hint="Denda (Rupiah)"
                             android:inputType="number"
                             android:maxLines="1" />
                     </android.support.design.widget.TextInputLayout>
@@ -177,7 +177,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:hint="Denda Berjalan"
+                            android:hint="Denda Berjalan (Rupiah)"
                             android:inputType="number"
                             android:maxLines="1" />
                     </android.support.design.widget.TextInputLayout>
@@ -192,7 +192,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:hint="Biaya Tagih"
+                        android:hint="Biaya Tagih (Rupiah)"
                         android:inputType="number"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -206,7 +206,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:hint="Penerimaan"
+                        android:hint="Penerimaan (Rupiah)"
                         android:inputType="number"
                         android:maxLines="1" />
                 </android.support.design.widget.TextInputLayout>
@@ -230,6 +230,44 @@
 
                         <Spinner
                             android:id="@+id/spNoRVB"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:spinnerMode="dropdown" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Klasifikasi" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=":" />
+
+                        <Spinner
+                            android:id="@+id/spKlasifikasi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:spinnerMode="dropdown" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Alasan" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=":" />
+
+                        <Spinner
+                            android:id="@+id/spAlasan"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:spinnerMode="dropdown" />

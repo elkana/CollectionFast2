@@ -137,7 +137,7 @@ import static id.co.ppu.collectionfast2.location.LocationFused.FASTEST_INTERVAL;
 import static id.co.ppu.collectionfast2.location.LocationFused.UPDATE_INTERVAL;
 
 // TODO: tombol sync multi fitur jd lbh simple, bisa utk tarik lkp ataupun sync. pembedanya bisa dr trnldvHeader
-public class MainActivity extends PushNotificationActivity
+public class MainActivity extends FirebaseActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, NavigationView.OnNavigationItemSelectedListener
@@ -156,18 +156,6 @@ public class MainActivity extends PushNotificationActivity
     private String mCurrentProfilePhotoPath;
 
     private PendingIntent pendingIntent;
-
-//    @BindView(R.id.fab)
-//    FloatingActionButton fab;
-
-//    @BindView(R.id.coordinatorLayout)
-//    public View coordinatorLayout;
-//
-//    @BindView(R.id.nav_view)
-//    NavigationView navigationView;
-//
-//    @BindView(R.id.drawer_layout)
-//    DrawerLayout drawer;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -723,7 +711,15 @@ public class MainActivity extends PushNotificationActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            if (!NetUtil.isConnected(this)) {
+                showSnackBar(getString(R.string.error_online_required));
+                return false;
+            }
+
+            startActivity(new Intent(this, ActivityHelpWeb.class));
+            return true;
+        } if (id == R.id.action_settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), 999);
             return true;
         } else if (id == R.id.action_clear_chats) {
@@ -735,7 +731,7 @@ public class MainActivity extends PushNotificationActivity
         } else if (id == R.id.action_reset) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("Reset Data");
-            alertDialogBuilder.setMessage("This will Logout Application.\nAre you sure?");
+            alertDialogBuilder.setMessage(getString(R.string.prompt_reset_data));
             //null should be your on click listener
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
@@ -749,38 +745,6 @@ public class MainActivity extends PushNotificationActivity
                             backToLoginScreen();
                         }
                     });
-
-                    /*
-                    View promptsView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_pwd, null);
-                    final EditText input = ButterKnife.findById(promptsView, R.id.password);
-
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Type Your Password")
-                            .setView(promptsView)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    String value = input.getText().toString();
-                                    String userPwd = Storage.getPref(Storage.KEY_PASSWORD, null);
-                                    if (!value.equals(userPwd)) {
-                                        Snackbar.make(coordinatorLayout, "Invalid password !", Snackbar.LENGTH_LONG).show();
-                                        return;
-                                    }
-
-                                    resetData();
-                                    backToLoginScreen();
-
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                }
-                            })
-                            .show()
-                    ;
-*/
                 }
             });
 
@@ -841,7 +805,7 @@ public class MainActivity extends PushNotificationActivity
         }*/ else if (id == R.id.nav_reset) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("Reset Data");
-            alertDialogBuilder.setMessage("This will Logout Application.\nAre you sure?");
+            alertDialogBuilder.setMessage(getString(R.string.prompt_reset_data));
             //null should be your on click listener
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
@@ -1104,7 +1068,7 @@ public class MainActivity extends PushNotificationActivity
                 new AlertDialog.Builder(this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Force refresh")
-                        .setMessage("Are you sure ?")
+                        .setMessage(getString(R.string.prompt))
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1125,7 +1089,7 @@ public class MainActivity extends PushNotificationActivity
     }
 
 
-    private void getLKPFromServer(final String collectorCode, Date lkpDate, final String createdBy, final OnPostRetrieveLKP listener) {
+    private void getLKPFromServer(final String collectorCode, final Date lkpDate, final String createdBy, final OnPostRetrieveLKP listener) {
 
         // tarik LKP
         RequestLKPByDate requestLKP = new RequestLKPByDate();
@@ -1154,7 +1118,7 @@ public class MainActivity extends PushNotificationActivity
             return;
         }
 
-        final ProgressDialog mProgressDialog = Utility.createAndShowProgressDialog(this, "Getting your LKP from server.\nPlease wait...");
+        final ProgressDialog mProgressDialog = Utility.createAndShowProgressDialog(this, getString(R.string.message_get_lkp));
 
         APInterface fastService = Storage.getAPIInterface();
 
@@ -1232,6 +1196,7 @@ public class MainActivity extends PushNotificationActivity
             @Override
             public void onFailure(Call<ResponseGetLKP> call, Throwable t) {
 
+                // sometime error like this: unterminated object at line 1 coumn 107757 path $.data.historyInstallments[68].createdBy
                 Log.e("eric.onFailure", t.getMessage(), t);
 
                 if (listener != null)
@@ -1239,7 +1204,22 @@ public class MainActivity extends PushNotificationActivity
 
                 Utility.dismissDialog(mProgressDialog);
 
-                Utility.showDialog(MainActivity.this, "Server Problem", t.getMessage());
+                NetUtil.syncLogError(MainActivity.this, realm, collectorCode, "getLKPFromServer", t.getMessage(), null);
+
+                new AlertDialog.Builder(MainActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Data Error")
+                        .setMessage(getString(R.string.error_data_failure_retry))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getLKPFromServer(collectorCode, lkpDate, createdBy, listener);
+                            }
+
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+//                Utility.showDialog(MainActivity.this, "Data Failure", t.getMessage());
             }
         });
 
@@ -2371,67 +2351,6 @@ public class MainActivity extends PushNotificationActivity
 
                     }
                 });
-/*
-                View promptsView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_pwd, null);
-                final EditText input = ButterKnife.findById(promptsView, R.id.password);
-
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(getString(R.string.prompt_your_password))
-                        .setView(promptsView)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                Utility.hideKeyboard(input);
-
-                                String value = input.getText().toString();
-                                final String userPwd = Storage.getPref(Storage.KEY_PASSWORD, null);
-                                if (!value.equals(userPwd)) {
-                                    Snackbar.make(coordinatorLayout, getString(R.string.error_incorrect_password), Snackbar.LENGTH_LONG).show();
-                                    return;
-                                }
-
-                                boolean anyDataToSync = anyDataToSync();
-
-                                if (anyDataToSync) {
-                                    syncTransaction(false, new OnSuccessError() {
-                                        @Override
-                                        public void onSuccess(String msg) {
-                                            // close batch here
-                                            closeBatch();
-
-                                        }
-
-                                        @Override
-                                        public void onFailure(Throwable throwable) {
-                                        }
-
-                                        @Override
-                                        public void onSkip() {
-                                        }
-                                    });
-                                    return;
-                                }
-
-                                // brarti ijo semua, close
-                                closeBatch();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Utility.hideKeyboard(input);
-                            }
-                        })
-                        .show();
-
-                alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        Utility.hideKeyboard(input);
-                    }
-                });
-*/
 
             }
         });

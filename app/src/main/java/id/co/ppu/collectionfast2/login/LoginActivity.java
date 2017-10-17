@@ -1018,7 +1018,7 @@ public class LoginActivity extends BasicActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView tv = new TextView(this.ctx);
             tv.setPadding(10, 20, 10, 20);
-            tv.setTextColor(Color.BLACK);
+            tv.setTextColor(Color.WHITE);
             tv.setText(list.get(position));
             tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 

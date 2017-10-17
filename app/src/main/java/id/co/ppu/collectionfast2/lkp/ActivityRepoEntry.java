@@ -216,7 +216,7 @@ public class ActivityRepoEntry extends BasicActivity {
 
         if (TextUtils.isEmpty(bastbjNo)) {
 //            spBASTKs.setError(getString(R.string.error_field_required));
-            Toast.makeText(this, "Please select BASTK", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "BASTK"), Toast.LENGTH_SHORT).show();
             focusView = spBASTKs;
             cancel = true;
         }
@@ -340,7 +340,7 @@ public class ActivityRepoEntry extends BasicActivity {
 
                 PoAUtil.commit(ActivityRepoEntry.this, collectorId, ldvNo, contractNo);
 
-                Toast.makeText(ActivityRepoEntry.this, "Repo saved !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityRepoEntry.this, getString(R.string.message_data_saved, "Repo"), Toast.LENGTH_SHORT).show();
 
             }
         }, new Realm.Transaction.OnError() {

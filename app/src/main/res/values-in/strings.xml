@@ -1,13 +1,16 @@
 <resources>
 
     <string name="prompt">Anda yakin ?</string>
+    <string name="prompt_select">Pilih %1s</string>
     <string name="prompt_quit">Yakin keluar aplikasi ?</string>
     <string name="prompt_password">Kata Kunci</string>
     <string name="prompt_your_password">Masukkan Kata Kunci</string>
+    <string name="prompt_reset_data">Anda yakin akan Logout juga dari aplikasi ?</string>
     <string name="remember_pwd">Ingat Kata Kunci</string>
 
     <!-- Strings related to login -->
     <string name="action_sign_in_short">Masuk</string>
+    <string name="action_help">Bantuan</string>
     <string name="action_penalty">Tunggu %1s</string>
 
     <string name="error_invalid_login">User atau Kata Kunci salah</string>
@@ -54,7 +57,11 @@
     <string name="error_ptp_end_month">Janji bayar tidak bisa diakhir bulan</string>
     <string name="error_sync_failed_with_msg">Sinkronisasi Gagal.\n%1$s</string>
     <string name="error_lkp_empty">Tidak ada LKP untuk hari ini</string>
+    <string name="error_data_failure_retry">Gagal ambil data.\nCoba lagi?</string>
+    <string name="error_rvb_used">No RV sudah terpakai.\nSilakan pilih yang lain.</string>
 
+    <string name="message_get_lkp">Mengambil daftar LKP dari server.\nMohon tunggu...</string>
+    <string name="message_data_saved">%1s Saved</string>
     <string name="message_please_wait">Sedang diproses...</string>
     <string name="message_sync_start">Mulai Sinkronisasi...</string>
     <string name="message_sync_finish">Sinkronisasi Selesai.</string>

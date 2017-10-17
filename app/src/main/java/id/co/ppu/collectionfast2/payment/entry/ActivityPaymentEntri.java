@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -34,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.co.ppu.collectionfast2.R;
+import id.co.ppu.collectionfast2.adapter.AdapterAlasan;
+import id.co.ppu.collectionfast2.adapter.AdapterKlasifikasi;
 import id.co.ppu.collectionfast2.component.BasicActivity;
 import id.co.ppu.collectionfast2.component.RVBAdapter;
 import id.co.ppu.collectionfast2.location.Location;
@@ -41,6 +44,8 @@ import id.co.ppu.collectionfast2.poa.ActivityPoA;
 import id.co.ppu.collectionfast2.pojo.DisplayTrnContractBuckets;
 import id.co.ppu.collectionfast2.pojo.ServerInfo;
 import id.co.ppu.collectionfast2.pojo.UserConfig;
+import id.co.ppu.collectionfast2.pojo.master.MstDelqReasons;
+import id.co.ppu.collectionfast2.pojo.master.MstLDVClassifications;
 import id.co.ppu.collectionfast2.pojo.master.MstParam;
 import id.co.ppu.collectionfast2.pojo.sync.SyncTrnRVB;
 import id.co.ppu.collectionfast2.pojo.sync.SyncTrnRVColl;
@@ -137,6 +142,16 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
      */
     private GoogleApiClient client;
 
+    // 17 oct 17
+    @BindView(R.id.spKlasifikasi)
+    Spinner spKlasifikasi;
+
+    @BindView(R.id.spAlasan)
+    Spinner spAlasan;
+
+    private AdapterKlasifikasi adapterKlasifikasi;
+    private AdapterAlasan adapterAlasan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +163,42 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
+
+        RealmResults<MstLDVClassifications> rrLkpKlasifikasi = this.realm.where(MstLDVClassifications.class).findAll();
+        MstLDVClassifications hintKlasifikasi = new MstLDVClassifications();
+        hintKlasifikasi.setDescription(getString(R.string.spinner_please_select));
+        adapterKlasifikasi = new AdapterKlasifikasi(this, android.R.layout.simple_spinner_item, this.realm.copyFromRealm(rrLkpKlasifikasi));
+        adapterKlasifikasi.insert(hintKlasifikasi, 0);
+        spKlasifikasi.setAdapter(adapterKlasifikasi);
+        spKlasifikasi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                updatePotensiList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        RealmResults<MstDelqReasons> rrAlasan = this.realm.where(MstDelqReasons.class).findAll();
+        MstDelqReasons hintAlasan = new MstDelqReasons();
+        hintAlasan.setDescription(getString(R.string.spinner_please_select));
+        adapterAlasan = new AdapterAlasan(this, android.R.layout.simple_spinner_item, this.realm.copyFromRealm(rrAlasan));
+        adapterAlasan.insert(hintAlasan, 0);
+        spAlasan.setAdapter(adapterAlasan);
+        spAlasan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                updatePotensiList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -195,7 +246,7 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
             final ProgressDialog mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setIndeterminate(true);
             mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Please wait...");
+            mProgressDialog.setMessage(getString(R.string.message_please_wait));
             mProgressDialog.show();
 
             new AsyncTask<Void, Void, List<String>>() {
@@ -458,6 +509,22 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
             RVBAdapter adapterRVB = new RVBAdapter(this, android.R.layout.simple_spinner_item, list);
             spNoRVB.setAdapter(adapterRVB);
 
+            String classCode = trnRVColl.getClassCode();
+            for (int i = 0; i < adapterKlasifikasi.getCount(); i++) {
+                if (classCode.equals(adapterKlasifikasi.getItem(i).getClassCode())) {
+                    spKlasifikasi.setSelection(i);
+                    break;
+                }
+            }
+
+            String delqCode = trnRVColl.getDelqCode();
+            for (int i = 0; i < adapterAlasan.getCount(); i++) {
+                if (delqCode.equals(adapterAlasan.getItem(i).getDelqCode())) {
+                    spAlasan.setSelection(i);
+                    break;
+                }
+            }
+
 //            flTakePhoto.setVisibility(View.GONE);
 //            svMain.setVisibility(View.VISIBLE);
         } else {
@@ -570,6 +637,24 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
         final String dendaBerjalan = etDendaBerjalan.getText().toString().trim();
         final String biayaTagih = etBiayaTagih.getText().toString().trim();
 
+        String sAlasan = spAlasan.getSelectedItem().toString();
+        MstDelqReasons delqReasons = realm.where(MstDelqReasons.class).equalTo("description", sAlasan).findFirst();
+        String sKlasifikasi = spKlasifikasi.getSelectedItem().toString();
+        MstLDVClassifications ldvClassifications = realm.where(MstLDVClassifications.class).equalTo("description", sKlasifikasi).findFirst();
+        final String delqCode = delqReasons == null ? "" : delqReasons.getDelqCode();
+        final String classCode = ldvClassifications == null ? "" : ldvClassifications.getClassCode();
+
+        if (TextUtils.isEmpty(delqCode)) {
+            Toast.makeText(this, getString(R.string.prompt_select, "Alasan"), Toast.LENGTH_SHORT).show();
+            focusView = spAlasan;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(classCode)) {
+            Toast.makeText(this, getString(R.string.prompt_select, "Klasifikasi"), Toast.LENGTH_SHORT).show();
+            focusView = spKlasifikasi;
+            cancel = true;
+        }
         // avoid user sengaja entri no contract ngaco
         DisplayTrnContractBuckets displayTrnContractBuckets = realm.where(DisplayTrnContractBuckets.class)
                 .equalTo("contractNo", contractNo)
@@ -593,13 +678,13 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
                 .findFirst();
 
         if (selectedRVB == null) {
-            Toast.makeText(this, "Please select No RV !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.prompt_select, "No RV"), Toast.LENGTH_SHORT).show();
             focusView = spNoRVB;
             cancel = true;
         } else {
             // cek lagi dulu apakah TrnRVBnya udah CL atau masih OP ?
             if (!editMode && selectedRVB.getRvbStatus().equals("CL")) {
-                Toast.makeText(this, "The selected No RV is already used.\nPlease select another !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_rvb_used), Toast.LENGTH_SHORT).show();
                 focusView = spNoRVB;
                 cancel = true;
             }
@@ -846,6 +931,11 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
                 trnRVColl.setReceivedAmount(Long.valueOf(penerimaan));
                 trnRVColl.setLastupdateBy(Utility.LAST_UPDATE_BY);
                 trnRVColl.setLastupdateTimestamp(new Date());
+
+                // 17 oct 2017
+                trnRVColl.setDelqCode(delqCode);
+                trnRVColl.setClassCode(classCode);
+
                 realm.copyToRealm(trnRVColl);
 
             }

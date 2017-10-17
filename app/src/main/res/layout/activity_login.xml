@@ -10,6 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorPrimaryDark"
     tools:context="id.co.ppu.collectionfast2.login.LoginActivity">
 
     <ScrollView
@@ -141,11 +142,13 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilUsername"
+                    android:textColorHint="#b9ffffff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <AutoCompleteTextView
                         android:id="@+id/username"
+                        android:textColor="@android:color/white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_userid"
@@ -155,12 +158,15 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/tilPassword"
+                    android:textColorHint="#b9ffffff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:passwordToggleTint="#b9ffffff"
                     app:passwordToggleEnabled="true">
 
                     <EditText
                         android:id="@+id/password"
+                        android:textColor="@android:color/white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_password"
@@ -177,7 +183,9 @@
                     android:id="@+id/cbRememberPwd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/remember_pwd" />
+                    android:text="@string/remember_pwd"
+                    android:textColor="#b9ffffff"
+                    />
             </LinearLayout>
 
             <LinearLayout
