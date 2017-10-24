@@ -81,5 +81,8 @@
     <string name="news_from">DARI</string>
 
     <string name="pre_cancel_confirmation">Batalkan entri </string>
+    <string name="action_news">Berita</string>
+    <string name="label_home">Rumah</string>
+    <string name="label_office">Kantor</string>
 
 </resources>

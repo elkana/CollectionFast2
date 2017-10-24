@@ -41,6 +41,7 @@ import id.co.ppu.collectionfast2.component.BasicActivity;
 import id.co.ppu.collectionfast2.component.RVBAdapter;
 import id.co.ppu.collectionfast2.location.Location;
 import id.co.ppu.collectionfast2.poa.ActivityPoA;
+import id.co.ppu.collectionfast2.poa.ScrollingActivityPoA;
 import id.co.ppu.collectionfast2.pojo.DisplayTrnContractBuckets;
 import id.co.ppu.collectionfast2.pojo.ServerInfo;
 import id.co.ppu.collectionfast2.pojo.UserConfig;
@@ -590,7 +591,7 @@ public class ActivityPaymentEntri extends BasicActivity implements FragmentActiv
         etPenerimaan.requestFocus();
 
         if (trnRVColl == null) {
-            Intent i = new Intent((this), ActivityPoA.class);
+            Intent i = new Intent((this), ScrollingActivityPoA.class);
 
 //            String json = new Gson().toJson(dtl);
 

@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -193,7 +194,7 @@ public class BasicActivity extends AppCompatActivity {
             Class<?> c = Class.forName("android.os.SystemProperties");
             Method get = c.getMethod("get", String.class);
             String serial1 = (String) get.invoke(c, "ril.serialnumber");
-            sb.append(",").append("deviceSN=").append(serial1);
+            sb.append(",").append("deviceSN=").append(TextUtils.isEmpty(serial1) ? android.os.Build.SERIAL : serial1);
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }

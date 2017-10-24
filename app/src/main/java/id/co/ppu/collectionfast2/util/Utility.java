@@ -60,7 +60,7 @@ public class Utility {
             ,{"fast-mobile", "cmobile.radanafinance.co.id", "7001"}
             ,{"fast-mobile2", "c1mobile.radanafinance.co.id", "7001"}
     };
-    public final static int NETWORK_TIMEOUT_MINUTES = DEVELOPER_MODE ? 1 : 3 ;
+    public final static int NETWORK_TIMEOUT_MINUTES = DEVELOPER_MODE ? 1 : 5 ;
 
     public final static int CYCLE_CHAT_STATUS_MILLISEC = (DEVELOPER_MODE ? 3 : 15) * 60 * 1000;
     public final static int CYCLE_CHAT_QUEUE_MILLISEC = (DEVELOPER_MODE ? 2 : 3) * 1000;
@@ -649,6 +649,13 @@ public class Utility {
 
     public static boolean isAlpha(String name) {
         return name.matches("[a-zA-Z]+");
+    }
+
+    public static String includeTrailingPath(String path, char separator){
+        if(path.charAt(path.length()-1) != separator){
+            path += separator;
+        }
+        return path;
     }
 
     public static String getFirstTwoChars(String fullName){

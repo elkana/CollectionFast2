@@ -1,6 +1,7 @@
 package id.co.ppu.collectionfast2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -14,6 +15,7 @@ import static id.co.ppu.collectionfast2.util.Storage.KEY_SERVER_ID;
 
 public class ActivityHelpWeb extends BasicActivity {
 
+    private static final String TAG = "ActivityHelpWeb";
     WebView web;
 
     @Override
@@ -76,7 +78,9 @@ public class ActivityHelpWeb extends BasicActivity {
         String hardcodeUrl = "http://cmobile.radanafinance.co.id:7001/docs/helpweb.html";
         try {
             HttpUrl httpUrl = Utility.buildUrl(Storage.getPrefAsInt(KEY_SERVER_ID, 0));
-            String serverUrl = httpUrl.url().toString();
+            String serverUrl = Utility.includeTrailingPath(httpUrl.url().toString(), '/');
+
+            Log.e(TAG, "server:" + serverUrl);
             web.loadUrl(serverUrl + "docs/helpweb.html");
         } catch (Exception e) {
             e.printStackTrace();

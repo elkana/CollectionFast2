@@ -86,6 +86,7 @@ import id.co.ppu.collectionfast2.login.LoginActivity;
 import id.co.ppu.collectionfast2.news.ActivityNews;
 import id.co.ppu.collectionfast2.payment.entry.ActivityPaymentEntri;
 import id.co.ppu.collectionfast2.poa.ActivityPoA;
+import id.co.ppu.collectionfast2.poa.ScrollingActivityPoA;
 import id.co.ppu.collectionfast2.pojo.DisplayTrnContractBuckets;
 import id.co.ppu.collectionfast2.pojo.DisplayTrnLDVDetails;
 import id.co.ppu.collectionfast2.pojo.LKPData;
@@ -689,6 +690,10 @@ public class MainActivity extends FirebaseActivity
         DrawableCompat.setTint(drawableTaskLog, ContextCompat.getColor(this, android.R.color.white));
         menu.findItem(R.id.action_clear_chats).setIcon(drawableTaskLog);
 
+        Drawable drawableHelp = DrawableCompat.wrap(menu.findItem(R.id.action_help).getIcon());
+        DrawableCompat.setTint(drawableHelp, ContextCompat.getColor(this, android.R.color.white));
+        menu.findItem(R.id.action_help).setIcon(drawableHelp);
+
         return true;
     }
 
@@ -712,12 +717,7 @@ public class MainActivity extends FirebaseActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_help) {
-            if (!NetUtil.isConnected(this)) {
-                showSnackBar(getString(R.string.error_online_required));
-                return false;
-            }
-
-            startActivity(new Intent(this, ActivityHelpWeb.class));
+            openHelp();
             return true;
         } if (id == R.id.action_settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), 999);
@@ -828,6 +828,10 @@ public class MainActivity extends FirebaseActivity
 
             alertDialogBuilder.show();
 
+
+            return false;
+        } else if (id == R.id.nav_help) {
+            openHelp();
 
             return false;
         } else if (id == R.id.nav_logout) {
@@ -1295,7 +1299,7 @@ public class MainActivity extends FirebaseActivity
                     // kalo lkpinquiry ga
                     && !isLKPInquiry
                     ) {
-                Intent i = new Intent((this), ActivityPoA.class);
+                Intent i = new Intent((this), ScrollingActivityPoA.class);
 
                 String json = new Gson().toJson(dtl);
 
@@ -1618,6 +1622,15 @@ public class MainActivity extends FirebaseActivity
         return anyDataToSync();
     }
 
+    public void openHelp() {
+        if (!NetUtil.isConnected(this)) {
+            showSnackBar(getString(R.string.error_online_required));
+            return;
+        }
+
+        startActivity(new Intent(this, ActivityHelpWeb.class));
+    }
+
     public void openNews() {
         Intent i = new Intent(this, ActivityNews.class);
         startActivity(i);
@@ -1667,7 +1680,7 @@ public class MainActivity extends FirebaseActivity
         }
 
         /* propose cancel, dipindah di activitypaymententri saat user pilih kontrak
-        Intent i = new Intent((this), ActivityPoA.class);
+        Intent i = new Intent((this), ScrollingActivityPoA.class);
 
         i.putExtra(ActivityPoA.PARAM_COLLECTOR_ID, collectorId);
         i.putExtra(ActivityPoA.PARAM_LDV_NO, trnLDVHeader.getLdvNo());

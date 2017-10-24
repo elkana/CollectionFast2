@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -931,18 +930,44 @@ public class DataUtil {
         if (addr == null) return "";
 
         StringBuilder alamat = new StringBuilder();
+
         alamat.append(addr.getCollAddr())
                     .append("\n").append(addr.getCollCity()).append(", ").append(addr.getCollZip())
-                    .append("\nRT/RW: ").append(addr.getCollRt() + "/" + addr.getCollRw())
-                    .append("\nKel/Kec: ").append(addr.getCollKel() + "/" + addr.getCollKec())
+                    .append(", RT/RW: ").append(addr.getCollRt() + "/" + addr.getCollRw())
+                    .append(", Kel/Kec: ").append(addr.getCollKel() + "/" + addr.getCollKec())
         ;
 
-        if (TextUtils.isEmpty(addr.getCollMobPhone())) {
-            alamat.append("\nPhone").append(addr.getCollMobPhone());
-        }
+        alamat.append("\nPh: ").append(addr.getCollMobPhone() == null ? "-" : addr.getCollMobPhone());
+//        if (addr.getCollMobPhone() != null)
+//            alamat.append(" / ").append(addr.getCollMobPhone());
+
+        if (addr.getCollMobPhone2() != null)
+            alamat.append(" / ").append(addr.getCollMobPhone2());
+
+        if (addr.getCollFixPhone() != null && !addr.getCollFixPhone().equals("0"))
+            alamat.append(" / ").append(addr.getCollFixPhArea() + addr.getCollFixPhone());
 
         return alamat.toString();
 
     }
+
+    /*
+    public static final String prettyAddressInHtml(TrnCollectAddr addr) {
+
+        if (addr == null) return "";
+
+        StringBuilder alamat = new StringBuilder();
+        alamat.append("<h2>").append(addr.getCollAddr()).append("</h2>")
+                    .append("<br>").append(addr.getCollCity()).append(", ").append(addr.getCollZip())
+                    .append("<br>RT/RW: ").append(addr.getCollRt() + "/" + addr.getCollRw())
+                    .append("<br>Kel/Kec: ").append(addr.getCollKel() + "/" + addr.getCollKec())
+        ;
+
+        alamat.append("<br>Phone: ").append(addr.getCollMobPhone());
+        alamat.append("<br>Mobile-Phone: ").append(addr.getCollMobPhone());
+
+        return alamat.toString();
+    }
+    */
 }
 

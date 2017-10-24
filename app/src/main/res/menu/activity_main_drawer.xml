@@ -98,12 +98,16 @@
                 android:visible="false"
                 android:id="@+id/nav_news"
                 android:icon="@drawable/ic_mail_outline_black_24dp"
-                android:title="News" />
+                android:title="@string/action_news" />
             <item
                 android:visible="false"
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_help_outline_black_24dp"
+                android:title="@string/action_help" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@android:drawable/ic_lock_power_off"

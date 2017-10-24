@@ -192,7 +192,7 @@ public class Storage {
 
     public static String getLanguageId(Context ctx) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String langId = sharedPrefs.getString("language", "x"); //id / en
+        String langId = sharedPrefs.getString("language", "id"); //id / en
 
         return langId;
 

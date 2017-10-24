@@ -1,10 +1,16 @@
 package id.co.ppu.collectionfast2.poa;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -23,22 +29,18 @@ import id.co.ppu.collectionfast2.util.NetUtil;
 import id.co.ppu.collectionfast2.util.PoAUtil;
 import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 
-/**
- * Picture-On-Arrival
- */
-public class ActivityPoA extends BasicActivity {
-
+public class ScrollingActivityPoA extends BasicActivity {
     public static final String PARAM_LKP_DETAIL = "lkp.detail";
     public static final String PARAM_COLLECTOR_ID = "collector.id";
     public static final String PARAM_CUSTOMER_NAME = "customer.name";
-//    public static final String PARAM_CUSTOMER_ADDR = "customer.address";
+    //    public static final String PARAM_CUSTOMER_ADDR = "customer.address";
     public static final String PARAM_CONTRACT_NO = "customer.contractNo";
     public static final String PARAM_LDV_NO = "ldvNo";
 
     private String lkpDetail = null;
     private String collCode = null;
     private String contractNo = null;
-//    private String custAddr = null;
+    //    private String custAddr = null;
     private String custName = null;
 
     private String ldvNo = null;
@@ -59,15 +61,53 @@ public class ActivityPoA extends BasicActivity {
 
         Animation animZoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         ivCamera.startAnimation(animZoomIn);
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_poa);
-
+        setContentView(R.layout.activity_scrolling_poa);
         ButterKnife.bind(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleAdress();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+            }
+        });
+
+        fab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showMap();
+                return true;
+            }
+        });
+
+        tvAddressDetail.setAutoLinkMask(Linkify.PHONE_NUMBERS);
+        tvAddressDetail.setLinksClickable(true);
+
+//        Drawable drawableTaskLog = menu.findItem(R.id.action_clear_chats).getIcon();
+        Drawable drawableTaskLog = DrawableCompat.wrap(fab.getDrawable());
+        DrawableCompat.setTint(drawableTaskLog, ContextCompat.getColor(this, android.R.color.white));
+        fab.setImageDrawable(drawableTaskLog);
+
+//        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+//        params.setBehavior(new AppBarLayout.Behavior());
+//        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+//        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+//            @Override
+//            public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
+//                return false;
+//            }
+//        });
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -78,6 +118,7 @@ public class ActivityPoA extends BasicActivity {
 //            this.custAddr = extras.getString(PARAM_CUSTOMER_ADDR);
             this.ldvNo = extras.getString(PARAM_LDV_NO);
 
+//            setTitle(null);
             setTitle(custName);
         }
 
@@ -93,22 +134,13 @@ public class ActivityPoA extends BasicActivity {
 //        tvAddressDetail.setTypeface(font);
 
 //        tvAddressDetail.performLongClick();
-        tvAddressDetail.performClick();
-        tvAddressDetail.setAutoLinkMask(Linkify.PHONE_NUMBERS);
-        tvAddressDetail.setLinksClickable(true);
+        fab.performClick();
 
         Animation fadeInAnimation = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
         fadeInAnimation.setDuration(1000);
         tvAddressDetail.startAnimation(fadeInAnimation);
 
         pulsator.start();
-    }
-
-    @OnLongClick(R.id.tvAddressDetail)
-    public boolean onLongClickAddress() {
-        showMap();
-
-        return true;
     }
 
     private void showMap() {
@@ -165,9 +197,17 @@ public class ActivityPoA extends BasicActivity {
         }
     }
 
-    @OnClick(R.id.tvAddressDetail)
-    public void onClickAddress() {
-        toggleAdress();
+//    @OnClick(R.id.tvAddressDetail)
+//    public void onClickAddress() {
+////        toggleAdress();
+//        showMap();
+//    }
+
+    @OnLongClick(R.id.tvAddressDetail)
+    public boolean onLongClickAddress() {
+        showMap();
+
+        return true;
     }
 
     @OnClick(R.id.llTakePhoto)

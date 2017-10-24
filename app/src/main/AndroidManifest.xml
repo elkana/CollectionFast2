@@ -138,8 +138,12 @@
         <activity
             android:name=".poa.ActivityPoA"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".poa.ScrollingActivityPoA"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".news.ActivityNews" />
-        <activity android:name=".ActivityHelpWeb"></activity>
+        <activity android:name=".ActivityHelpWeb" />
     </application>
 
 </manifest>
