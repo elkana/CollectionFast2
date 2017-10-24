@@ -78,9 +78,12 @@ public class ActivityHelpWeb extends BasicActivity {
         String hardcodeUrl = "http://cmobile.radanafinance.co.id:7001/docs/helpweb.html";
         try {
             HttpUrl httpUrl = Utility.buildUrl(Storage.getPrefAsInt(KEY_SERVER_ID, 0));
-            String serverUrl = Utility.includeTrailingPath(httpUrl.url().toString(), '/');
+//            String serverUrl = Utility.includeTrailingPath(httpUrl.url().toString(), '/');
+//            URL url = httpUrl.url();
+            String serverUrl = httpUrl.scheme() + "://" + httpUrl.host() + ":" + httpUrl.port() + "/";
 
             Log.e(TAG, "server:" + serverUrl);
+
             web.loadUrl(serverUrl + "docs/helpweb.html");
         } catch (Exception e) {
             e.printStackTrace();
